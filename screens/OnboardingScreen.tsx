@@ -1,11 +1,13 @@
 import React, { useState, useRef } from 'react';
-import { View, FlatList, StyleSheet, Animated, Text } from 'react-native';
+import { View, FlatList, StyleSheet, Animated, } from 'react-native';
 import NextButton from '../components/NextButton';
 import OnboardingItems from '../components/OnboardingItems';
 import Paginator from '../components/Paginator';
 import slides from '../data/slides';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const OnboardingScreen = () => {
+
+const OnboardingScreen:React.FC<{navigation: any}> = ({navigation}) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
     const slidesRef: any = useRef(null);
@@ -16,9 +18,18 @@ const OnboardingScreen = () => {
 
     const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 
-    const scrollTo = () => {
+    const scrollTo = async () => {
         if(currentIndex < slides.length -1){
             slidesRef.current.scrollToIndex({index: currentIndex + 1})
+        }
+        else {
+            try{ 
+                await AsyncStorage.setItem('@viewOnboarding','true')
+                navigation.navigate("Home")
+            }
+            catch(err){
+                console.log("Error @setItem: ",err)
+            }
         }
     }
 

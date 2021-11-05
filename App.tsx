@@ -8,32 +8,92 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
+  ActivityIndicator,
+  StyleSheet, View,
 } from 'react-native';
 import OnboardingScreen from './screens/OnboardingScreen';
+import HomeScreen from './screens/HomeScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const AppStack = createStackNavigator();
 
+const Loading = () => {
+  return(
+    <View style={{flex:1, justifyContent: 'center', backgroundColor: '#ffffff'}}>
+      <ActivityIndicator size="large" color="#f4338f"/>
+    </View>
+  )
+}
 
 const App = () => {
+  const [loading, setLoading] = useState(true);
+  const [viewedOnboarding, setViewOnboarding] = useState(false);
+
+  const checkOnboarding = async () => {
+    try{
+      const value = await AsyncStorage.getItem('@viewOnboarding');
+
+      if(value !== null){
+        setViewOnboarding(true);
+      }
+    }
+    catch(err){
+      console.log("Error @checkOnboarding: ",err);
+    }
+    finally{
+      setLoading(false);
+    }
+  }
+
+  useEffect(()=> {
+    checkOnboarding();
+  },[])
+
   return (
     <NavigationContainer>
       <AppStack.Navigator>
-          <AppStack.Screen 
-            name="VMarket" 
-            component={OnboardingScreen}
+        {loading
+        ? 
+          <AppStack.Screen
+            name="Loader"
+            component={Loading}
             options={{
-              headerTitle: " "
+              headerTitle: " ",
+              headerShown: false,
             }}
           />
+          : 
+            viewedOnboarding
+            ?
+              <AppStack.Screen
+                name=" Home"
+                component={HomeScreen}
+                options={{
+                  headerTitle: " "
+                }}  
+              />
+              :
+              <AppStack.Screen 
+                name="Onboarding" 
+                component={OnboardingScreen}
+                options={{
+                  headerTitle: " ",
+                  headerShown: false,
+                }}
+              />
+        }
+        <AppStack.Screen
+          name="Home"
+          component={HomeScreen}
+          options={{
+            headerTitle: " ",
+            headerShown: false,
+          }}  
+        />
       </AppStack.Navigator>
     </NavigationContainer>
   );
