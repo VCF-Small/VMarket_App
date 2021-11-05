@@ -18,6 +18,8 @@ import HomeScreen from './screens/HomeScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LoginScreen from './screens/LoginScreen';
+import SignUpScreen from './screens/SignUpScreen';
 
 const AppStack = createStackNavigator();
 
@@ -73,7 +75,8 @@ const App = () => {
                 name=" Home"
                 component={HomeScreen}
                 options={{
-                  headerTitle: " "
+                  headerTitle: " ",
+                  headerShown: false,
                 }}  
               />
               :
@@ -89,6 +92,22 @@ const App = () => {
         <AppStack.Screen
           name="Home"
           component={HomeScreen}
+          options={{
+            headerTitle: " ",
+            headerShown: false,
+          }}  
+        />
+        <AppStack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{
+            headerTitle: " ",
+            headerShown: false,
+          }}  
+        />
+        <AppStack.Screen
+          name="Register"
+          component={SignUpScreen}
           options={{
             headerTitle: " ",
             headerShown: false,
