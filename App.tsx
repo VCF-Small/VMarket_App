@@ -34,6 +34,8 @@ const Loading = () => {
 const App = () => {
   const [loading, setLoading] = useState(true);
   const [viewedOnboarding, setViewOnboarding] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+
 
   const checkOnboarding = async () => {
     try{
@@ -61,7 +63,7 @@ const App = () => {
         {loading
         ? 
           <AppStack.Screen
-            name="Loader"
+            name=" "
             component={Loading}
             options={{
               headerTitle: " ",
@@ -71,17 +73,28 @@ const App = () => {
           : 
             viewedOnboarding
             ?
-              <AppStack.Screen
-                name=" Home"
-                component={HomeScreen}
-                options={{
-                  headerTitle: " ",
-                  headerShown: false,
-                }}  
-              />
+              loggedIn
+              ?
+                <AppStack.Screen 
+                  name=" " 
+                  component={HomeScreen}
+                  options={{
+                    headerTitle: " ",
+                    headerShown: false,
+                  }}
+                />
+                :
+                <AppStack.Screen 
+                  name=" " 
+                  component={LoginScreen}
+                  options={{
+                    headerTitle: " ",
+                    headerShown: false,
+                  }}
+                />
               :
               <AppStack.Screen 
-                name="Onboarding" 
+                name=" " 
                 component={OnboardingScreen}
                 options={{
                   headerTitle: " ",
