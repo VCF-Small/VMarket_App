@@ -21,7 +21,7 @@ const LoginScreen:React.FC<{navigation: any}> = ({navigation}) => {
                             placeholderTextColor="#666666"
                             keyboardType="email-address"
                             autoCapitalize="none"
-                            style={{marginTop: -14, paddingLeft: 10, color: '#05375a'}}
+                            style={{marginTop: -14, paddingLeft: 10, color: '#05375a', flex: 1}}
                         />
                     </View>
                 </View>
@@ -34,7 +34,7 @@ const LoginScreen:React.FC<{navigation: any}> = ({navigation}) => {
                             placeholderTextColor="#666666"
                             autoCapitalize="none"
                             secureTextEntry={isHidden? true: false}
-                            style={{marginTop: -14, paddingHorizontal: 10, color: '#05375a'}}
+                            style={{marginTop: -14, paddingHorizontal: 10, color: '#05375a', flex: 1}}
                         />
                         <TouchableOpacity onPress={ () => {setIsHidden(!isHidden);}}>
                             <Image source={isHidden?require('../assets/hidden.png'): require('../assets/show.png')} style={{height: 20, width: 20}} />
@@ -51,7 +51,7 @@ const LoginScreen:React.FC<{navigation: any}> = ({navigation}) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => {navigation.navigate('Register')}}>
-                    <Text style={[styles.lable, {color: '#0275d8', fontSize: 14, textAlign: 'center', marginTop: 30}]}>Create an Account Here !</Text>
+                    <Text style={[styles.lable, {color: '#0275d8', fontSize: 14, textAlign: 'center', marginTop: 30}]}>Create an Account, Click Here !</Text>
                 </TouchableOpacity>
             </View>
         </View>

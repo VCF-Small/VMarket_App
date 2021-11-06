@@ -126,7 +126,7 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => {navigation.goBack()}}>
-                    <Text style={[styles.lable, {color: '#0275d8', fontSize: 14, textAlign: 'center', marginTop: 30}]}>Already have an account, Click Here !</Text>
+                    <Text style={[styles.lable, {color: '#0275d8', fontSize: 14, textAlign: 'center', marginTop: 30}]}>Already have an Account, Click Here !</Text>
                 </TouchableOpacity>
             </View>
         </View>
