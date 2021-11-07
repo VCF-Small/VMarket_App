@@ -39,6 +39,7 @@ const App = () => {
 
   const checkOnboarding = async () => {
     try{
+      // await AsyncStorage.removeItem('@viewOnboarding')
       const value = await AsyncStorage.getItem('@viewOnboarding');
 
       if(value !== null){
@@ -53,8 +54,23 @@ const App = () => {
     }
   }
 
+  const checkLoggedIn = async () => {
+    try{
+      // await AsyncStorage.removeItem('@LoggedIn')
+      const value = await AsyncStorage.getItem('@LoggedIn');
+
+      if(value !== null){
+        setLoggedIn(true);
+      }
+    }
+    catch(err){
+      console.log("Error @checkLoggedIn: ", err);
+    }
+  }
+
   useEffect(()=> {
     checkOnboarding();
+    checkLoggedIn();
   },[])
 
   return (
@@ -84,23 +100,25 @@ const App = () => {
                   }}
                 />
                 :
-                <AppStack.Screen 
-                  name=" " 
-                  component={LoginScreen}
+                <AppStack.Screen
+                  name=" "
                   options={{
                     headerTitle: " ",
                     headerShown: false,
-                  }}
-                />
+                  }}  
+                >
+                  {props => (<LoginScreen {...props} setLoggedIn={setLoggedIn} />)}
+                </AppStack.Screen>
               :
               <AppStack.Screen 
                 name=" " 
-                component={OnboardingScreen}
                 options={{
                   headerTitle: " ",
                   headerShown: false,
                 }}
-              />
+              >
+                {props => (<OnboardingScreen {...props} setViewOnboarding={setViewOnboarding} />)}
+              </AppStack.Screen>
         }
         <AppStack.Screen
           name="Home"
@@ -112,12 +130,13 @@ const App = () => {
         />
         <AppStack.Screen
           name="Login"
-          component={LoginScreen}
           options={{
             headerTitle: " ",
             headerShown: false,
           }}  
-        />
+        >
+          {props => (<LoginScreen {...props} setLoggedIn={setLoggedIn} />)}
+        </AppStack.Screen>      
         <AppStack.Screen
           name="Register"
           component={SignUpScreen}

@@ -1,9 +1,35 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StatusBar, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Button } from 'react-native'
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '@env'
 
-const LoginScreen:React.FC<{navigation: any}> = ({navigation}) => {
+const LoginScreen:React.FC<{navigation: any, setLoggedIn:any}> = ({setLoggedIn,navigation}) => {
 
     const [isHidden, setIsHidden] = useState(true);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [isDisabled, setIsDisabled] = useState(false);
+
+    const handleLogin = async () => {
+        try {
+            setIsDisabled(true);
+            var res = await axios.post(API_URL+"/auth/login", {
+                email: username,
+                password: password
+            })
+            console.warn(res)
+            if(res.status == 200){
+                await AsyncStorage.setItem('@LoggedIn','true')
+                setLoggedIn(true);
+            }
+            setIsDisabled(false);
+
+        }catch (err) {
+            console.warn(err)
+        }
+    }
+
 
     return (
         <View style={[styles.Container,{position: 'relative'}]}>
@@ -18,10 +44,12 @@ const LoginScreen:React.FC<{navigation: any}> = ({navigation}) => {
                         <Image source={require('../assets/user.png')} style={{height: 20, width: 20}} />
                         <TextInput 
                             placeholder="Your Username"
+                            value={username}
                             placeholderTextColor="#666666"
                             keyboardType="email-address"
                             autoCapitalize="none"
-                            style={{marginTop: -14, paddingLeft: 10, color: '#05375a', flex: 1}}
+                            style={{marginTop: -14, paddingLeft: 10, color: '#05375a'}}
+                            onChangeText={(username)=>{setUsername(username)}}
                         />
                     </View>
                 </View>
@@ -30,11 +58,13 @@ const LoginScreen:React.FC<{navigation: any}> = ({navigation}) => {
                     <View style={styles.inputText}>
                         <Image source={require('../assets/lock.png')} style={{height: 20, width: 20}} />
                         <TextInput 
+                            value={password}
                             placeholder="Your Password"
                             placeholderTextColor="#666666"
                             autoCapitalize="none"
                             secureTextEntry={isHidden? true: false}
-                            style={{marginTop: -14, paddingHorizontal: 10, color: '#05375a', flex: 1}}
+                            style={{marginTop: -14, paddingHorizontal: 10, color: '#05375a'}}
+                            onChangeText={(password)=>{setPassword(password)}}
                         />
                         <TouchableOpacity onPress={ () => {setIsHidden(!isHidden);}}>
                             <Image source={isHidden?require('../assets/hidden.png'): require('../assets/show.png')} style={{height: 20, width: 20}} />
@@ -42,9 +72,7 @@ const LoginScreen:React.FC<{navigation: any}> = ({navigation}) => {
                     </View>
                 </View>
 
-                <TouchableOpacity>
-                    <Button title="Sign In"/>
-                </TouchableOpacity>
+                <Button title="Sign In" onPress={()=> {handleLogin()}} disabled={isDisabled}/>
 
                 <TouchableOpacity>
                     <Text style={[styles.lable, {color: '#05375a', fontSize: 14, textAlign: 'center', marginTop: 30}]}>Forgot Password ?</Text>
@@ -97,6 +125,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         paddingVertical: 10,
     },
+    errorMessage: {
+        fontSize: 14,
+        color: '#ff0e0e',
+        marginTop: -15
+    }
 })
 
 export default LoginScreen

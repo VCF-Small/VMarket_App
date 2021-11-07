@@ -7,7 +7,7 @@ import slides from '../data/slides';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const OnboardingScreen:React.FC<{navigation: any}> = ({navigation}) => {
+const OnboardingScreen:React.FC<{navigation: any, setViewOnboarding:any}> = ({setViewOnboarding,navigation}) => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const scrollX = useRef(new Animated.Value(0)).current;
     const slidesRef: any = useRef(null);
@@ -25,7 +25,7 @@ const OnboardingScreen:React.FC<{navigation: any}> = ({navigation}) => {
         else {
             try{ 
                 await AsyncStorage.setItem('@viewOnboarding','true')
-                navigation.navigate("Home")
+                setViewOnboarding(true)
             }
             catch(err){
                 console.log("Error @setItem: ",err)
