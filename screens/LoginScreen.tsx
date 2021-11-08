@@ -3,6 +3,7 @@ import { StatusBar, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, 
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '@env'
+import Toast from 'react-native-toast-message';
 
 const LoginScreen:React.FC<{navigation: any, setLoggedIn:any}> = ({setLoggedIn,navigation}) => {
 
@@ -18,15 +19,23 @@ const LoginScreen:React.FC<{navigation: any, setLoggedIn:any}> = ({setLoggedIn,n
                 email: username,
                 password: password
             })
-            console.warn(res)
             if(res.status == 200){
                 await AsyncStorage.setItem('@LoggedIn','true')
+                Toast.show({
+                    type: 'success',
+                    text1: res.data.message,
+                  });
                 setLoggedIn(true);
             }
             setIsDisabled(false);
 
         }catch (err) {
-            console.warn(err)
+            // console.warn(err)
+            Toast.show({
+                type: 'error',
+                text1: 'Invalid credentials',
+              });
+            setIsDisabled(false);
         }
     }
 

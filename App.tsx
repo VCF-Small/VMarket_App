@@ -20,6 +20,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginScreen from './screens/LoginScreen';
 import SignUpScreen from './screens/SignUpScreen';
+import Toast from 'react-native-toast-message';
 
 const AppStack = createStackNavigator();
 
@@ -56,7 +57,7 @@ const App = () => {
 
   const checkLoggedIn = async () => {
     try{
-      // await AsyncStorage.removeItem('@LoggedIn')
+      await AsyncStorage.removeItem('@LoggedIn')
       const value = await AsyncStorage.getItem('@LoggedIn');
 
       if(value !== null){
@@ -74,6 +75,7 @@ const App = () => {
   },[])
 
   return (
+    <>
     <NavigationContainer>
       <AppStack.Navigator>
         {loading
@@ -147,6 +149,8 @@ const App = () => {
         />
       </AppStack.Navigator>
     </NavigationContainer>
+    <Toast />
+    </>
   );
 };
 
