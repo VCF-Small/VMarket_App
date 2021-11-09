@@ -27,13 +27,13 @@ const LoginScreen:React.FC<{navigation: any, setLoggedIn:any}> = ({setLoggedIn,n
                   });
                 setLoggedIn(true);
             }
-            setIsDisabled(false);
+            // setIsDisabled(false);
 
-        }catch (err) {
-            // console.warn(err)
+        }catch (error: any) {
+            console.log(error.config)
             Toast.show({
                 type: 'error',
-                text1: 'Invalid credentials',
+                text1: error.response? error.response.data.message: error.message,
               });
             setIsDisabled(false);
         }
