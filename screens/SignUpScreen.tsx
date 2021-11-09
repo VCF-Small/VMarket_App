@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { StatusBar, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Button } from 'react-native'
 import { Picker } from '@react-native-picker/picker'
+import Toast from 'react-native-toast-message';
+
 
 
 const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
@@ -8,7 +10,38 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
     const [isHiddenPassword, setIsHiddenPassword] = useState(true);
     const [isHiddenConfirmPassword, setIsHiddenConfirmPassword] = useState(true);
     const [selectedGender, setSelectedGender] = useState("Select");
+    const [isDisabled, setIsDisabled] = useState(false);
+    const [data, setData] = useState({"firstName": "", "lastName": "", "gender": "", "age": "", "email": "", "password": "", "confirmPassword": ""});
+    const [error, setError] = useState({"IsFirstName": false, "IsLastName": false, "IsGender": false, "IsEmail": false,"IsPassword": false, "IsConfirmPassword": false, "IsAge": false});
 
+    const handleSignUp = () =>{
+        try{
+            const regexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+            setError({
+                "IsFirstName":data.firstName.trim()? false: true, 
+                "IsLastName":data.lastName.trim()? false: true, 
+                "IsGender":data.gender.trim()? false: true,
+                "IsAge":data.age.trim()? false: true,
+                "IsEmail":data.email.trim()? !regexp.test(data.email) : true,
+                "IsPassword":data.password.trim()? false: true,
+                "IsConfirmPassword":data.confirmPassword.trim()? data.confirmPassword.trim() != data.password.trim() : true
+            })
+            console.log(error, data)
+
+            if(!error.IsPassword && !error.IsConfirmPassword && !error.IsEmail && !error.IsFirstName && !error.IsLastName && !error.IsGender && !error.IsAge){
+                    console.warn("API Call")
+            }
+            else{
+                Toast.show({
+                    type: 'error',
+                    text1: 'Invalid credentials',
+                  });
+            }
+        }
+        catch(err){
+            console.log("Error SignUp")
+        }
+    }
 
     return (
         <View style={[styles.Container,{position: 'relative'}]}>
@@ -29,8 +62,10 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
                             placeholderTextColor="#666666"
                             autoCapitalize="none"
                             style={{marginTop: -14, color: '#05375a'}}
+                            onChangeText={(value: string) => {setData({...data, "firstName": value.trim() })}}
                         />
                     </View>
+                    {error.IsFirstName&&<Text style={styles.errorMessage}>Invalid Credentials</Text>}
                 </View>
                 <View>
                     <Text style={styles.lable}>Last Name</Text>
@@ -40,8 +75,10 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
                             placeholderTextColor="#666666"
                             autoCapitalize="none"
                             style={{marginTop: -14, color: '#05375a'}}
+                            onChangeText={(value: string) => {setData({...data, "lastName": value.trim() })}}
                         />
                     </View>
+                    {error.IsLastName&&<Text style={styles.errorMessage}>Invalid Credentials</Text>}
                 </View>
                 </View>
                 
@@ -54,7 +91,7 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
                             mode="dropdown"
                             selectedValue={selectedGender}
                             style={styles.pickerStyle}
-                            onValueChange={(itemValue: string, itemIndex: number) => {setSelectedGender(itemValue); console.log(itemValue)}}
+                            onValueChange={(itemValue: string, itemIndex: number) => {setSelectedGender(itemValue); setData({...data, "gender": itemValue.trim()})}}
                         >
                             <Picker.Item label="Select" value="Select" enabled={false} />
                             <Picker.Item label="Male" value="Male" />
@@ -62,6 +99,7 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
                             <Picker.Item label="Other" value="Other" />
                         </Picker>
                     </View>
+                    {error.IsGender&&<Text style={styles.errorMessage}>Invalid Credentials</Text>}
                 </View>
                 <View>
                     <Text style={styles.lable}>Age</Text>
@@ -72,8 +110,10 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
                             autoCapitalize="none"
                             keyboardType="number-pad"
                             style={{marginTop: -14, color: '#05375a'}}
+                            onChangeText={(value: string) => {setData({...data, "age": value.trim() })}}
                         />
                     </View>
+                    {error.IsAge&&<Text style={styles.errorMessage}>Invalid Credentials</Text>}
                 </View>
                 </View>
 
@@ -86,8 +126,10 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
                             autoCapitalize="none"
                             keyboardType="email-address"
                             style={{marginTop: -14, color: '#05375a', flex: 1}}
+                            onChangeText={(value: string) => {setData({...data, "email": value.trim() })}}
                         />
                     </View>
+                    {error.IsEmail&&<Text style={styles.errorMessage}>Invalid Credentials</Text>}
                 </View>
 
                 <View>
@@ -99,11 +141,13 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
                             autoCapitalize="none"
                             secureTextEntry={isHiddenPassword? true: false}
                             style={{marginTop: -14, color: '#05375a', flex: 1}}
+                            onChangeText={(value: string) => {setData({...data, "password": value.trim() })}}
                         />
                         <TouchableOpacity onPress={ () => {setIsHiddenPassword(!isHiddenPassword);}}>
                             <Image source={isHiddenPassword?require('../assets/hidden.png'): require('../assets/show.png')} style={{height: 20, width: 20}} />
                         </TouchableOpacity>
                     </View>
+                    {error.IsPassword&&<Text style={styles.errorMessage}>Invalid Credentials</Text>}
                 </View>
                 <View>
                     <Text style={styles.lable}>Confirm Password</Text>
@@ -114,15 +158,17 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
                             autoCapitalize="none"
                             secureTextEntry={isHiddenConfirmPassword? true: false}
                             style={{marginTop: -14, color: '#05375a', flex: 1}}
+                            onChangeText={(value: string) => {setData({...data, "confirmPassword": value.trim() })}}
                         />
                         <TouchableOpacity onPress={ () => {setIsHiddenConfirmPassword(!isHiddenConfirmPassword);}}>
                             <Image source={isHiddenConfirmPassword?require('../assets/hidden.png'): require('../assets/show.png')} style={{height: 20, width: 20}} />
                         </TouchableOpacity>
                     </View>
+                    {error.IsConfirmPassword&&<Text style={styles.errorMessage}>Invalid Credentials</Text>}
                 </View>
 
                 <TouchableOpacity>
-                    <Button title="Sign Up"/>
+                    <Button title="Sign Up" onPress={()=>{handleSignUp()}}/>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => {navigation.goBack()}}>
@@ -161,7 +207,7 @@ const styles = StyleSheet.create({
     },
     BottomContainer: {
         position: 'absolute',
-        top: 250,
+        top: 230,
     },
     lable: {
         fontSize: 18,
@@ -184,6 +230,13 @@ const styles = StyleSheet.create({
         fontSize: 10,
         fontFamily: "Roboto-Regular",
         color: "#05375a",
+    },
+    errorMessage: {
+        color: '#ff0e0e',
+        fontSize: 12,
+        marginTop: -22,
+        paddingBottom: 10,
+
     },
 })
 
