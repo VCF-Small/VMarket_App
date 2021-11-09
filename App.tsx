@@ -57,7 +57,7 @@ const App = () => {
 
   const checkLoggedIn = async () => {
     try{
-      await AsyncStorage.removeItem('@LoggedIn')
+      // await AsyncStorage.removeItem('@LoggedIn')
       const value = await AsyncStorage.getItem('@LoggedIn');
 
       if(value !== null){
