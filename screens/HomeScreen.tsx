@@ -1,11 +1,12 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StatusBar, StyleSheet, Text, View } from 'react-native';
 
 
 const HomeScreen:React.FC<{navigation: any}> = ({navigation}) => {
 
     return (
         <View>
+            <StatusBar backgroundColor='#f4338f' barStyle="light-content"/>
             <Text>Home Screen</Text>
         </View>
     )
