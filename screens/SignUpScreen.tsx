@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { StatusBar, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, Button } from 'react-native'
 import { Picker } from '@react-native-picker/picker'
 import Toast from 'react-native-toast-message';
+import { API_URL } from '@env'
+import axios from 'axios';
 
 
 
@@ -14,8 +16,9 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
     const [data, setData] = useState({"firstName": "", "lastName": "", "gender": "", "age": "", "email": "", "password": "", "confirmPassword": ""});
     const [error, setError] = useState({"IsFirstName": false, "IsLastName": false, "IsGender": false, "IsEmail": false,"IsPassword": false, "IsConfirmPassword": false, "IsAge": false});
 
-    const handleSignUp = () =>{
+    const handleSignUp = async () =>{
         try{
+            setIsDisabled(true);
             const regexp = new RegExp(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
             setError({
                 "IsFirstName":data.firstName.trim()? false: true, 
@@ -29,17 +32,45 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
             console.log(error, data)
 
             if(!error.IsPassword && !error.IsConfirmPassword && !error.IsEmail && !error.IsFirstName && !error.IsLastName && !error.IsGender && !error.IsAge){
-                    console.warn("API Call")
+                try{
+                    var res = await axios.post(`${API_URL}/auth/register`, {
+                        "firstname" : data.firstName,
+                        "lastname": data.lastName,
+                        "age": parseInt(data.age),
+                        "gender": data.gender,
+                        "email": data.email,
+                        "password": data.password
+                    })
+                    if(res.status == 200){
+                        setIsDisabled(false);
+                        Toast.show({
+                            type: 'success',
+                            text1: res.data.message,
+                          });
+                          navigation.goBack();
+                    }
+                } 
+                catch(error: any){
+                    setIsDisabled(false);
+                    Toast.show({
+                        type: 'error',
+                        text1: error.message,
+                      });
+                }   
             }
             else{
+                setIsDisabled(false);
                 Toast.show({
                     type: 'error',
                     text1: 'Invalid credentials',
                   });
             }
         }
-        catch(err){
-            console.log("Error SignUp")
+        catch(err: any){
+            Toast.show({
+                type: 'error',
+                text1: err.message,
+              });
         }
     }
 
@@ -168,7 +199,7 @@ const SignUpScreen:React.FC<{navigation: any}> = ({navigation}) => {
                 </View>
 
                 <TouchableOpacity>
-                    <Button title="Sign Up" onPress={()=>{handleSignUp()}}/>
+                    <Button title="Sign Up" disabled={isDisabled} onPress={()=>{handleSignUp()}}/>
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => {navigation.goBack()}}>
