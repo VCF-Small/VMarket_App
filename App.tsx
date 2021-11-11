@@ -98,7 +98,6 @@ const App = () => {
                   component={HomeScreen}
                   options={{
                     headerTitle: " ",
-                    headerShown: false,
                   }}
                 />
                 :
@@ -127,8 +126,7 @@ const App = () => {
           component={HomeScreen}
           options={{
             headerTitle: " ",
-            headerShown: false,
-          }}  
+          }} 
         />
         <AppStack.Screen
           name="Login"
