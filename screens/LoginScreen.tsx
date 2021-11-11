@@ -15,19 +15,19 @@ const LoginScreen:React.FC<{navigation: any, setLoggedIn:any}> = ({setLoggedIn,n
     const handleLogin = async () => {
         try {
             setIsDisabled(true);
-            var res = await axios.post(API_URL+"/auth/login", {
+            var res = await axios.post(`${API_URL}/auth/login`, {
                 email: username,
                 password: password
             })
             if(res.status == 200){
                 await AsyncStorage.setItem('@LoggedIn','true')
+                setIsDisabled(false);
                 Toast.show({
                     type: 'success',
                     text1: res.data.message,
                   });
                 setLoggedIn(true);
             }
-            // setIsDisabled(false);
 
         }catch (error: any) {
             console.log(error.config)
