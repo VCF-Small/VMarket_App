@@ -17,7 +17,8 @@ import OnboardingScreen from './screens/OnboardingScreen';
 import HomeScreen from './screens/HomeScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+// import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginScreen from './screens/LoginScreen';
@@ -29,7 +30,7 @@ import StoreScreen from './screens/StoreScreen';
 import { color } from 'react-native-reanimated';
 
 const AppStack = createStackNavigator();
-const Tab = createBottomTabNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
 const Loading = () => {
   return(
@@ -113,14 +114,28 @@ const App = () => {
               loggedIn
                 ?
                 (
-                <AppStack.Screen name="HomeScreen">
+                <AppStack.Screen 
+                  name="HomeScreen"  
+                  options={({ navigation, route }) =>({
+                    title: ' ',
+                    headerStyle: { backgroundColor: '#f4338f' }, 
+                    headerShown: true,
+                    headerRight: () => (
+                      <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginRight: 20}}>
+                      <Icon size={20} name="bell" solid onPress={() => navigation.navigate('Cart')} style={{paddingHorizontal: 10}}/>
+                      <Icon size={20} name="question-circle" solid onPress={() => navigation.navigate('Home')}/>
+                      </View>
+                    ),
+                  })}
+                >
                   {()=>(
-                  <Tab.Navigator>
+                  <Tab.Navigator
+                    barStyle={{ backgroundColor: '#f4338f' }}
+                  >
                     <Tab.Screen 
                       name="Home"
                       component={HomeScreen}
                       options={{
-                        headerTitle: " ",
                         tabBarIcon:() => <Icon size={ 20 } name={ 'home' }/>
                       }}
                       />
@@ -128,7 +143,6 @@ const App = () => {
                       name="Store" 
                       component={StoreScreen} 
                       options={{
-                        headerTitle: " ",
                         tabBarIcon:() => <Icon size={ 20 } name={ 'store' }/>
 
 
@@ -138,7 +152,6 @@ const App = () => {
                       name="Cart" 
                       component={CartScreen} 
                       options={{
-                        headerTitle: " ",
                         tabBarIcon:() => <Icon size={ 20 } name={ 'shopping-cart' } light/>
                       }} 
                     />
@@ -146,7 +159,6 @@ const App = () => {
                       name="History" 
                       component={HistoryScreen} 
                       options={{
-                        headerTitle: " ",
                         tabBarIcon:() => <Icon size={ 20 } name={ 'history' } />
                       }} 
                     />
