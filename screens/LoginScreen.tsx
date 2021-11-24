@@ -20,7 +20,7 @@ const LoginScreen:React.FC<{navigation: any, setLoggedIn:any}> = ({setLoggedIn,n
                 password: password
             })
             if(res.status == 200){
-                await AsyncStorage.setItem('@LoggedIn','true')
+                await AsyncStorage.setItem('@LoggedIn',res.data.stkn)
                 setIsDisabled(false);
                 Toast.show({
                     type: 'success',
