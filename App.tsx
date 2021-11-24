@@ -32,6 +32,8 @@ import CountryFlag from "react-native-country-flag";
 import NotificationScreen from './screens/NotificationScreen';
 import InfoScreen from './screens/InfoScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs(['new NativeEventEmitter']); // Ignore log notification by message
 
 RNLocation.configure({
   distanceFilter: 0
@@ -58,7 +60,7 @@ const App = () => {
   const [countryCode, setCountryCode] = useState("IN");
 
   const permissionHandle = async () => {
-
+    if(loggedIn){
     let permission = await RNLocation.requestPermission({
       ios: "whenInUse",
       android: {
@@ -109,8 +111,9 @@ const App = () => {
       let result = response.results[0];
       setLocation(result.components.state_district);
       setCountryCode(result.components.country_code)
-      console.log("address:", result.components.state_district)
+      console.log("address:", result)
     }).catch(error => { console.log(error) })
+  }
   }
 
 
@@ -149,8 +152,13 @@ const App = () => {
   useEffect(() => {
     checkOnboarding();
     checkLoggedIn();
-    permissionHandle();  
   }, [])
+
+  useEffect(() => {
+    if(loggedIn) {
+      permissionHandle();
+    }
+  },[loggedIn])
 
   const linking = {
     prefixes: ['vmarket://'],
@@ -191,8 +199,8 @@ const App = () => {
                               <View style={{flex: 1, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'}}>
                                 <Icon name="user-circle" solid size={30} style={{marginRight: 10, color: '#fff'}} onPress={()=>navigation.navigate('Profile')}/>
                                 <View style={{width: 2, height: 35, backgroundColor: '#d5380c', marginRight: 10}}/>
-                                <CountryFlag isoCode={countryCode} size={20} style={{borderRadius: 30, height: 30, width: 30, marginRight: 10}} />
-                                <Text style={{fontSize: 16, color:'#fff', fontWeight: '800'}}>{location}</Text>
+                                <CountryFlag isoCode={countryCode} size={20} style={{borderRadius: 20, height: 20, width: 20, marginRight: 10}} />
+                                <Text style={{fontSize: 14, color:'#fff', fontWeight: '800'}}>{location}</Text>
                               </View>
                             ),
                             headerStyle: { backgroundColor: '#f4338f'},
